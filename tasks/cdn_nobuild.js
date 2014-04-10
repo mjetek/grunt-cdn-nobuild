@@ -43,14 +43,28 @@ module.exports = function(grunt) {
           endMatch,
           buildSection;// = cdnScriptTagRe.exec(src);
 
-      var newSection;
+      var sectionsData = ;
+
       while (beginMatch = buildSectionBeginRe.exec(src)) {
         endMatch = buildSectionEndRe.exec(src);
 
-        buildSection = src.substring(beginMatch.index, endMatch.index);
+        buildSection = src.substring(beginMatch.index, endMatch.index + );
+        var cdnScriptTags = [];
+        var cdnMatch;
+        while (cdnMatch = cdnScriptTagRe.exec(buildSection)) {
+          cdnScriptTags.push(cdnMatch[0]);
+        }
+        var newBuildSection = buildSection.replace(cdnScriptTagRe, '');
+        newBuildSection = cdnScriptTags.join('') + newBuildSection;
+
+        sectionsData.push({
+          begin: beginMatch.index,
+          end: endMatch.index,
+          newBuildSection: newBuildSection
+        });
 
         grunt.log.writeln('BEGIN');
-        buildSection
+        
         grunt.log.writeln(buildSection);
         grunt.log.writeln('END');
       }
