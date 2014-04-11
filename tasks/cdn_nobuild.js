@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     var options = this.options({
     });
 
-    var cdnScriptTagRe = /<script\ssrc\s*=\s*['"]([a-zA-Z]+:)?\/\/[^<]+<\/script>/gim;
+    var cdnScriptTagRe = /<script\ssrc\s*=\s*['"]([a-zA-Z]+:)?\/\/[^<]+<\/script>\r?\n?/gim;
     var buildSectionBeginRe = /<!--\s*build:/gim;
     var buildSectionEndRe = /<!--\s*endbuild\s*-->/gim;
 
@@ -43,12 +43,12 @@ module.exports = function(grunt) {
           endMatch,
           buildSection;// = cdnScriptTagRe.exec(src);
 
-      var sectionsData = ;
+      var sectionsData = [];
 
       while (beginMatch = buildSectionBeginRe.exec(src)) {
         endMatch = buildSectionEndRe.exec(src);
 
-        buildSection = src.substring(beginMatch.index, endMatch.index + );
+        buildSection = src.substring(beginMatch.index, endMatch.index);
         var cdnScriptTags = [];
         var cdnMatch;
         while (cdnMatch = cdnScriptTagRe.exec(buildSection)) {
@@ -64,10 +64,16 @@ module.exports = function(grunt) {
         });
 
         grunt.log.writeln('BEGIN');
-        
-        grunt.log.writeln(buildSection);
+        grunt.log.writeln(newBuildSection);
         grunt.log.writeln('END');
       }
+
+      for (var i = sectionsData.length -1; i >= 0; i--) {
+        var section = sectionsData[i];
+        src = src.substring(0, section.begin) + section.newBuildSection + src.substring(section.end);
+      }
+
+
 
       // grunt.log.writeln('whatever test');
       // while (matches = cdnScriptTagRe.exec(src)) {
@@ -76,7 +82,7 @@ module.exports = function(grunt) {
       // grunt.log.writeln(matches[0]);
 
       // Write the destination file.
-      // grunt.file.write(f.dest, src);
+      grunt.file.write(f.dest, src);
 
       // Print a success message.
       grunt.log.writeln('File "' + f.dest + '" created.');
