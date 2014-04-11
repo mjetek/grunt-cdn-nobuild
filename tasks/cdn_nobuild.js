@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
     var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<]+<\/script>\r?\n?)|(<link\s+(?:\w*\s*[="]*)*\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+\/?>\r?\n?)/gim;
     var buildSectionBeginRe = /<!--\s*build:/gim;
-    var buildSectionEndRe = /<!--\s*endbuild\s*-->/gim;
+    var buildSectionEndRe = /<!--\s*endbuild/gim;
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
@@ -44,11 +44,13 @@ module.exports = function(grunt) {
 
       var sectionsData = [];
 
+      buildSectionBeginRe.lastIndex = 0;
+      buildSectionEndRe.lastIndex = 0;
       while (beginMatch = buildSectionBeginRe.exec(src)) {
         endMatch = buildSectionEndRe.exec(src);
 
         if (!endMatch) {
-          grunt.util.error('Missing endbuild block!');
+          grunt.fail.fatal('Missing endbuild block!');
         }
 
         buildSection = src.substring(beginMatch.index, endMatch.index);
@@ -73,9 +75,7 @@ module.exports = function(grunt) {
       }
 
       grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
+      grunt.log.writeln('Write to file "' + f.dest + '"');
     });
   });
 

@@ -34,8 +34,9 @@ module.exports = function(grunt) {
         options: {
         },
         files: [{
-          src: ['tmp/scripts.html'],
-          dest: 'tmp/scripts-out.html'
+          expand: true,
+          src: ['tmp/*.html'],
+          dest: '.'
         }],
       }
     },
