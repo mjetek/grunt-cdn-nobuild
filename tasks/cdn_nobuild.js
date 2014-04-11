@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     var options = this.options({
     });
 
-    var cdnScriptTagRe = /<script\ssrc\s*=\s*['"]([a-zA-Z]+:)?\/\/[^<]+<\/script>\r?\n?/gim;
+    var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<]+<\/script>\r?\n?)|(<link\s+(?:\w*\s*[="]*)*\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+\/?>\r?\n?)/gim;
     var buildSectionBeginRe = /<!--\s*build:/gim;
     var buildSectionEndRe = /<!--\s*endbuild\s*-->/gim;
 
@@ -38,23 +38,26 @@ module.exports = function(grunt) {
         return grunt.file.read(filepath);
       }).join('');
 
-      // grunt.log.writeln(src);
       var beginMatch,
           endMatch,
-          buildSection;// = cdnScriptTagRe.exec(src);
+          buildSection;
 
       var sectionsData = [];
 
       while (beginMatch = buildSectionBeginRe.exec(src)) {
         endMatch = buildSectionEndRe.exec(src);
 
+        if (!endMatch) {
+          grunt.util.error('Missing endbuild block!');
+        }
+
         buildSection = src.substring(beginMatch.index, endMatch.index);
         var cdnScriptTags = [];
         var cdnMatch;
-        while (cdnMatch = cdnScriptTagRe.exec(buildSection)) {
+        while (cdnMatch = cdnTagsRe.exec(buildSection)) {
           cdnScriptTags.push(cdnMatch[0]);
         }
-        var newBuildSection = buildSection.replace(cdnScriptTagRe, '');
+        var newBuildSection = buildSection.replace(cdnTagsRe, '');
         newBuildSection = cdnScriptTags.join('') + newBuildSection;
 
         sectionsData.push({
@@ -62,10 +65,6 @@ module.exports = function(grunt) {
           end: endMatch.index,
           newBuildSection: newBuildSection
         });
-
-        grunt.log.writeln('BEGIN');
-        grunt.log.writeln(newBuildSection);
-        grunt.log.writeln('END');
       }
 
       for (var i = sectionsData.length -1; i >= 0; i--) {
@@ -73,15 +72,6 @@ module.exports = function(grunt) {
         src = src.substring(0, section.begin) + section.newBuildSection + src.substring(section.end);
       }
 
-
-
-      // grunt.log.writeln('whatever test');
-      // while (matches = cdnScriptTagRe.exec(src)) {
-      //   grunt.log.writeln(matches[0]);
-      // }
-      // grunt.log.writeln(matches[0]);
-
-      // Write the destination file.
       grunt.file.write(f.dest, src);
 
       // Print a success message.

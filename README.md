@@ -1,6 +1,5 @@
 # grunt-cdn-nobuild
-> This plugin is under development! Please don't use it yet.
-> Moves cdnified scripts outside build section.
+> Moves the cdnified script tags outside of the builds sections.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.4`
