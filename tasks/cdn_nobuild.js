@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     var options = this.options({
     });
 
-    var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<]+<\/script>\r?\n?)|(<link\s+(?:\w*\s*[="]*)*\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+\/?>\r?\n?)/gim;
+    var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+?:)?\/\/[^<]+<\/script>)|(<link\s+(?:\w*=['"].*?['"])*?\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+?\/?>)/gim;
     var buildSectionBeginRe = /<!--\s*build:/gim;
     var buildSectionEndRe = /<!--\s*endbuild/gim;
 
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
           cdnScriptTags.push(cdnMatch[0]);
         }
         var newBuildSection = buildSection.replace(cdnTagsRe, '');
-        newBuildSection = cdnScriptTags.join('') + newBuildSection;
+        newBuildSection = cdnScriptTags.join('\n') + newBuildSection;
 
         sectionsData.push({
           begin: beginMatch.index,
