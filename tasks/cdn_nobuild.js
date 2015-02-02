@@ -60,7 +60,7 @@ module.exports = function(grunt) {
           cdnScriptTags.push(cdnMatch[0]);
         }
         var newBuildSection = buildSection.replace(cdnTagsRe, '');
-        newBuildSection = cdnScriptTags.join('\n') + newBuildSection;
+        newBuildSection = cdnScriptTags.join('\n') + '\n' + newBuildSection;
 
         sectionsData.push({
           begin: beginMatch.index,
