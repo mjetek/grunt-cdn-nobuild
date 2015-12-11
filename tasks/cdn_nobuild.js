@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     var options = this.options({
     });
 
-    var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+?:)?\/\/[^<]+<\/script>)|(<link\s+(?:\w*=['"].*?['"])*?\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+?\/?>)/gim;
+    var cdnTagsRe = /(<script\ssrc\s*=\s*['"](?:[a-zA-Z]+?:)?\/\/[^<]+<\/script>)|(<link(?:\s+\w*=['"].*?['"])*?\s+href\s*=\s*['"](?:[a-zA-Z]+:)?\/\/[^<>]+?\/?>)/gim;
     var buildSectionBeginRe = /<!--\s*build:/gim;
     var buildSectionEndRe = /<!--\s*endbuild/gim;
 
